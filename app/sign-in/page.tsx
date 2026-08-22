@@ -105,7 +105,7 @@ const SignIn = () => {
               className="w-full bg-primary hover:bg-primary/90"
               disabled={loading}
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
             <p className="text-center text-sm text-gray-600">
               Don't have an account ?{" "}
@@ -113,7 +113,7 @@ const SignIn = () => {
                 href={"/sign-up"}
                 className="font-medium text-primary hover:underline"
               >
-                {loading ? "Signing In..." : "Sign In"}
+                Sign Up
               </Link>
             </p>
           </CardFooter>
