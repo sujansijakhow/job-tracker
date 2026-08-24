@@ -41,14 +41,12 @@ const Navbar = () => {
                 </Button>
               </Link>
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Button variant={"ghost"} className={"relative h-8 w-8 rounded-full hover:bg-white"}>
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className={"bg-primary text-white"}>
-                        {session.user.name[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
+                <DropdownMenuTrigger className="relative inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent focus-visible:outline-none">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className={"bg-primary text-white"}>
+                      {session.user.name[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent className="w-40" align="end">

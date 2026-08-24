@@ -3,10 +3,8 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { promises as dns } from "node:dns";
 import { initalizeUserBoard } from "../init-user-board";
 
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
 const client = new MongoClient(process.env.MONGODB_URI!)
 const db = client.db()
 
@@ -15,6 +13,13 @@ export const auth = betterAuth({
         client,
         transaction: false,
     }),
+
+    session: {
+        cookieCache: {
+            enabled: true,
+            maxAge: 60 * 60
+        }
+    },
     emailAndPassword: {
         enabled: true,
     },
@@ -22,7 +27,7 @@ export const auth = betterAuth({
         user: {
             create: {
                 after: async (user) => {
-                    if(user.id) {
+                    if (user.id) {
                         await initalizeUserBoard(user.id)
                     }
                 }
@@ -47,7 +52,7 @@ export async function signOut() {
         headers: await headers()
     })
 
-    if(result.success) {
+    if (result.success) {
         redirect("/sign-in")
     }
 }

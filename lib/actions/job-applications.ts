@@ -4,6 +4,7 @@ import { error } from "console"
 import { getSession } from "../auth/auth"
 import connectDB from "../db"
 import { Board, Column, JobApplication } from "../models"
+import { revalidatePath } from "next/cache"
 
 interface JobApplicationData {
     company: string,
@@ -67,7 +68,7 @@ export async function createJobApplication(data: JobApplicationData) {
         .select("order")
         .lean()) as { order: number } | null
 
-    const jobApplicaiton = await JobApplication.create({
+    const jobApplication = await JobApplication.create({
         company,
         position,
         location,
@@ -84,8 +85,10 @@ export async function createJobApplication(data: JobApplicationData) {
     })
 
     await Column.findByIdAndUpdate(columnId, {
-        $push: { jobApplicaitons: jobApplicaiton._id }
+        $push: { jobApplications: jobApplication._id }
     })
 
-    return { data: JSON.parse(JSON.stringify(jobApplicaiton)) }
+    revalidatePath("/dashboard")
+
+    return { data: JSON.parse(JSON.stringify(jobApplication)) }
 }
