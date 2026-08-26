@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn, signUp } from "@/lib/auth/auth-client";
+import { signIn } from "@/lib/auth/auth-client";
+import { startDemo } from "@/lib/auth/demo";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -49,45 +50,23 @@ const SignIn = () => {
     }
   }
 
-  async function handleTryDemo() {
-    setError("");
-    setDemoLoading(true);
+ async function handleTryDemo() {
+  setError("");
+  setDemoLoading(true);
 
-    try {
-      const guestId = crypto.randomUUID().slice(0, 8);
-      const guestEmail = `guest_${guestId}@demo.local`;
-      const guestPassword = crypto.randomUUID();
-
-      const signUpResult = await signUp.email({
-        email: guestEmail,
-        password: guestPassword,
-        name: `Guest ${guestId}`,
-      });
-
-      if (signUpResult.error) {
-        setError(signUpResult.error.message ?? "Failed to start demo");
-        return;
-      }
-
-      // signUp already establishes a session in Better Auth, but sign in
-      // explicitly to be safe across versions/configs.
-      const signInResult = await signIn.email({
-        email: guestEmail,
-        password: guestPassword,
-      });
-
-      if (signInResult.error) {
-        setError(signInResult.error.message ?? "Failed to start demo");
-        return;
-      }
-
-      router.push("/dashboard");
-    } catch (err) {
-      setError("Failed to start demo. Please try again.");
-    } finally {
-      setDemoLoading(false);
-    }
+  try {
+    await startDemo();
+    router.push("/dashboard");
+  } catch (err) {
+    setError(
+      err instanceof Error
+        ? err.message
+        : "Failed to start demo. Please try again.",
+    );
+  } finally {
+    setDemoLoading(false);
   }
+}
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-white p-4">

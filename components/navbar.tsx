@@ -13,10 +13,27 @@ import {
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import SignOutButton from "./sign-out-btn";
 import { useSession } from "@/lib/auth/auth-client";
+import { useState } from "react";
+import { startDemo } from "@/lib/auth/demo";
 
 const Navbar = () => {
   //   const session = await getSession();
   const { data: session } = useSession();
+
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  async function handleTryDemo() {
+    setDemoLoading(true);
+
+    try {
+      await startDemo();
+      window.location.href = "/dashboard";
+    } catch (error) {
+      console.error("Failed to start demo:", error);
+    } finally {
+      setDemoLoading(false);
+    }
+  }
 
   return (
     <nav className="border-b border-gray-200 bg-white">
@@ -76,6 +93,15 @@ const Navbar = () => {
                   Log In
                 </Button>
               </Link>
+
+              <Button
+                onClick={handleTryDemo}
+                variant="outline"
+                disabled={demoLoading}
+                className="border-primary text-primary hover:bg-primary/5 cursor-pointer"
+              >
+                Try Demo
+              </Button>
               <Link href={"/sign-up"}>
                 <Button className="bg-primary hover:bg-primary/90 cursor-pointer">
                   Start for free
