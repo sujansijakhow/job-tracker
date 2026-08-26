@@ -3,7 +3,7 @@ import connectDB from "@/lib/db";
 import { Board, Column } from "@/lib/models"; 
 import JobApplication from "@/lib/models/job-application"; 
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization");
