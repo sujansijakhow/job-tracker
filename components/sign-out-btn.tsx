@@ -9,6 +9,7 @@ const SignOutButton = () => {
 
   return (
     <DropdownMenuItem
+      className="cursor-pointer"
       onClick={async () => {
         const result = await signOut();
 

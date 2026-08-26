@@ -4,6 +4,7 @@ import { MongoClient } from "mongodb";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { initalizeUserBoard } from "../init-user-board";
+import { seedDemoJobs } from "../seed-demo-data";
 
 const client = new MongoClient(process.env.MONGODB_URI!)
 const db = client.db()
@@ -23,17 +24,35 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    // databaseHooks: {
+    //     user: {
+    //         create: {
+    //             after: async (user) => {
+    //                 if (user.id) {
+    //                     await initalizeUserBoard(user.id)
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
     databaseHooks: {
         user: {
             create: {
                 after: async (user) => {
-                    if (user.id) {
-                        await initalizeUserBoard(user.id)
+                    if (!user.id) {
+                        return;
                     }
-                }
-            }
-        }
-    }
+
+                    await initalizeUserBoard(user.id);
+
+                    if (user.email?.endsWith("@demo.local")) {
+                        await seedDemoJobs(user.id);
+                    }
+                },
+            },
+        },
+    },
 
 
 })

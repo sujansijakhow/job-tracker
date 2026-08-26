@@ -42,7 +42,7 @@ const Navbar = () => {
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger className="relative inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-accent focus-visible:outline-none">
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 cursor-pointer">
                     <AvatarFallback className={"bg-primary text-white"}>
                       {session.user.name[0].toUpperCase()}
                     </AvatarFallback>

@@ -56,6 +56,7 @@ async function DashboardPage() {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-black">Job Hunt</h1>
           <p className="text-gray-600">Track your job applications</p>
+          <p className="text-gray-800 text-[13px]">You can drag and drop the job card for efficiency</p>
         </div>
         <KanBandBoard
           board={board}

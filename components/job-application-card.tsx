@@ -138,8 +138,8 @@ export default function JobApplicationCard({
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                <DropdownMenuContent align="end" className={"w-40 space-y-3"}>
+                  <DropdownMenuItem  className="cursor-pointer" onClick={() => setIsEditing(true)}>
                     <Edit2 className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
@@ -150,6 +150,7 @@ export default function JobApplicationCard({
                         .map((column, key) => (
                           <DropdownMenuItem
                             key={key}
+                            className={"cursor-pointer"}
                             onClick={() => handleMove(column._id)}
                           >
                             Move to {column.name}
@@ -158,7 +159,7 @@ export default function JobApplicationCard({
                     </>
                   )}
                   <DropdownMenuItem
-                    className="text-destructive"
+                    className="text-destructive cursor-pointer"
                     onClick={() => handleDelete()}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
