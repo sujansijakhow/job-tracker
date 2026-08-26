@@ -142,7 +142,7 @@ const SignIn = () => {
           <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full bg-primary hover:bg-primary/90 cursor-pointer"
               disabled={loading || demoLoading}
             >
               {loading ? "Signing In..." : "Sign In"}

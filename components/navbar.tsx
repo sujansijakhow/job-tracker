@@ -35,7 +35,7 @@ const Navbar = () => {
               <Link href={"/dashboard"}>
                 <Button
                   variant={"ghost"}
-                  className="text-gray-700 hover:text-black"
+                  className="text-gray-700 hover:text-black cursor-pointer"
                 >
                   Dashboard
                 </Button>
@@ -71,13 +71,13 @@ const Navbar = () => {
               <Link href={"/sign-in"}>
                 <Button
                   variant="ghost"
-                  className="text-gray-700 hover:text-black"
+                  className="text-gray-700 hover:text-black cursor-pointer"
                 >
                   Log In
                 </Button>
               </Link>
               <Link href={"/sign-up"}>
-                <Button className="bg-primary hover:bg-primary/90">
+                <Button className="bg-primary hover:bg-primary/90 cursor-pointer">
                   Start for free
                 </Button>
               </Link>
