@@ -1,4 +1,6 @@
-import { Column, JobApplication } from "@/lib/models/models.types";
+"use client";
+
+import { JobApplication, Column } from "@/lib/models/models.types";
 import { Card, CardContent } from "./ui/card";
 import { Edit2, ExternalLink, MoreVertical, Plus, Trash2 } from "lucide-react";
 import {
@@ -8,7 +10,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { deleteJobApplication, updateJobApplication } from "@/lib/actions/job-applications";
+import {
+  deleteJobApplication,
+  updateJobApplication,
+} from "@/lib/actions/job-applications";
 import {
   Dialog,
   DialogContent,
@@ -16,22 +21,23 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { useState } from "react";
-
+import React, { useState } from "react";
 interface JobApplicationCardProps {
   job: JobApplication;
   columns: Column[];
+  dragHandleProps?: React.HTMLAttributes<HTMLElement>;
 }
 
-const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
-
-  const [isEditing, setIsEditing] = useState(false)
-  
+export default function JobApplicationCard({
+  job,
+  columns,
+  dragHandleProps,
+}: JobApplicationCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     company: job.company,
     position: job.position,
@@ -41,12 +47,11 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
     jobUrl: job.jobUrl || "",
     columnId: job.columnId || "",
     tags: job.tags?.join(", ") || "",
-    description: job.description || ""
-
-  })
+    description: job.description || "",
+  });
 
   async function handleUpdate(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     try {
       const result = await updateJobApplication(job._id, {
         ...formData,
@@ -56,45 +61,48 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
           .filter((tag) => tag.length > 0),
       });
 
-      if(!result.error) {
-        setIsEditing(false)
-      } 
-    } catch (err) {
-      console.error("Failed to move job application: ", err);
-    }
-  }
-  async function handleDelete() {
-    try {
-      const result = await deleteJobApplication(job._id);
-
-      if(result.error) {
-        console.error("Failed to delete job application: ", result.error)
+      if (!result.error) {
+        setIsEditing(false);
       }
     } catch (err) {
       console.error("Failed to move job application: ", err);
     }
   }
-  async function handleMove(newColumndId: string) {
+
+  async function handleDelete() {
     try {
-      const result = await updateJobApplication(job._id, {
-        columnId: newColumndId,
-      });
+      const result = await deleteJobApplication(job._id);
+
+      if (result.error) {
+        console.error("Failed to delete job application:", result.error);
+      }
     } catch (err) {
       console.error("Failed to move job application: ", err);
     }
   }
 
+  async function handleMove(newColumnId: string) {
+    try {
+      const result = await updateJobApplication(job._id, {
+        columnId: newColumnId,
+      });
+    } catch (err) {
+      console.error("Failed to move job application: ", err);
+    }
+  }
   return (
     <>
-      <Card className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm">
+      <Card
+        className="cursor-pointer transition-shadow hover:shadow-lg bg-white group shadow-sm"
+        {...dragHandleProps}
+      >
         <CardContent className="p-4">
-          <div className="flex items-start jusity-between gap-2">
+          <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-sm mb-1">{job.position}</h3>
               <p className="text-xs text-muted-foreground mb-2">
                 {job.company}
               </p>
-
               {job.description && (
                 <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
                   {job.description}
@@ -102,21 +110,20 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
               )}
               {job.tags && job.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-2">
-                  {job.tags.map((tag, key) => (
+                  {job.tags.map((tag, index) => (
                     <span
-                      key={key}
-                      className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 darK:bg-blue-900 dark:text-blue-300"
+                      key={index}
+                      className="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
               )}
-
               {job.jobUrl && (
                 <a
-                  target="_blank"
                   href={job.jobUrl}
+                  target="_blank"
                   className="inline-flex items-center gap-1 text-xs text-primary hover:underline mt-1"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -124,18 +131,16 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                 </a>
               )}
             </div>
-
             <div className="flex items-start gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button variant={"ghost"} size={"icon"} className={"h-6 w-6"}>
+                  <Button variant="ghost" size="icon" className="h-6 w-6">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => setIsEditing(true)}>
-                    <Edit2 className="mr-2 h-4 2-4" />
+                    <Edit2 className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
                   {columns.length > 1 && (
@@ -152,9 +157,11 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                         ))}
                     </>
                   )}
-
-                  <DropdownMenuItem className="text-destructive" onClick={() => handleDelete()}>
-                    <Trash2 className="mr-2 h-4 w04" />
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={() => handleDelete()}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -170,7 +177,6 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
             <DialogTitle>Add Job Application</DialogTitle>
             <DialogDescription>Track a new job application</DialogDescription>
           </DialogHeader>
-
           <form className="space-y-4" onSubmit={handleUpdate}>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -197,7 +203,6 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                   />
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="location">Location</Label>
@@ -210,7 +215,7 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="salary">Salary </Label>
+                  <Label htmlFor="salary">Salary</Label>
                   <Input
                     id="salary"
                     placeholder="e.g., $100k - $150k"
@@ -221,11 +226,11 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                   />
                 </div>
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="jobUrl">Job URL </Label>
+                <Label htmlFor="jobUrl">Job URL</Label>
                 <Input
                   id="jobUrl"
+                  type="url"
                   placeholder="https://..."
                   value={formData.jobUrl}
                   onChange={(e) =>
@@ -234,10 +239,10 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="tags">Tags (comma-separated) </Label>
+                <Label htmlFor="tags">Tags (comma-separated)</Label>
                 <Input
                   id="tags"
-                  placeholder="React, Tailwind ..."
+                  placeholder="React, Tailwind, High Pay"
                   value={formData.tags}
                   onChange={(e) =>
                     setFormData({ ...formData, tags: e.target.value })
@@ -249,7 +254,7 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
                 <Textarea
                   id="description"
                   rows={3}
-                  placeholder="Brief description of role..."
+                  placeholder="Brief description of the role..."
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -272,7 +277,7 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
             <DialogFooter>
               <Button
                 type="button"
-                variant={"outline"}
+                variant="outline"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
@@ -284,6 +289,4 @@ const JobApplicationCard = ({ job, columns }: JobApplicationCardProps) => {
       </Dialog>
     </>
   );
-};
-
-export default JobApplicationCard;
+}
